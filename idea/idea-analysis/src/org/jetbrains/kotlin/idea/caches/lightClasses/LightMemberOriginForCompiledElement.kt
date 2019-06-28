@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.lightClasses
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationContainer
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -47,6 +49,21 @@ interface LightMemberOriginForCompiledElement<T : PsiMember> : LightMemberOrigin
 
     override val originKind: JvmDeclarationOriginKind
         get() = JvmDeclarationOriginKind.OTHER
+
+    override fun isEquivalentTo(other: PsiElement?): Boolean {
+        return when (other) {
+            is KtDeclaration -> {
+                val containingFile = other.containingFile
+                if (containingFile !is KtFile || !containingFile.isCompiled) {
+                    false
+                } else {
+                    originalElement?.isEquivalentTo(other) ?: false
+                }
+            }
+            is PsiMember -> member.isEquivalentTo(other)
+            else -> false
+        }
+    }
 
     override fun isValid(): Boolean = member.isValid
 }
