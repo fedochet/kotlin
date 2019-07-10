@@ -64,7 +64,7 @@ object KotlinJsr223DefaultScriptCompilationConfiguration : ScriptCompilationConf
                 if (jsr223context != null && context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.importAllBindings] == true) {
                     val updatedProperties =
                         context.compilationConfiguration[ScriptCompilationConfiguration.providedProperties]?.toMutableMap() ?: hashMapOf()
-                    val allBindings = (jsr223context.getBindings(ScriptContext.GLOBAL_SCOPE).toMutableMap() ?: hashMapOf()).apply {
+                    val allBindings = (jsr223context.getBindings(ScriptContext.GLOBAL_SCOPE)?.toMutableMap() ?: hashMapOf()).apply {
                         val engineBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE)
                         if (engineBindings != null)
                             putAll(engineBindings)

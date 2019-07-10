@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.junit.Assert
 import org.junit.Test
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import javax.script.*
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 
@@ -199,6 +202,33 @@ obj
     }
 
     @Test
+    fun testEvalWithIoCapture() {
+        val outStream = ByteArrayOutputStream()
+        val errStream = ByteArrayOutputStream()
+        val inStream = ByteArrayInputStream("foo\n".toByteArray())
+        val (actualOut, actualErr, _) = captureOutErrRet {
+            val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+            val context = SimpleScriptContext().apply {
+                reader = inStream.bufferedReader()
+                writer = outStream.bufferedWriter()
+                errorWriter = errStream.bufferedWriter()
+            }
+
+            // TODO: find out why the output is empty without first println() call
+            engine.eval("val x = readLine(); println(); println(\"1\$x\"); System.err.println(\"2\$x\")", context)
+
+            engine.eval("println(\"bar\")")
+        }
+        outStream.flush()
+        errStream.flush()
+        Assert.assertEquals("1foo", outStream.toString().trim())
+        Assert.assertEquals("2foo", errStream.toString().trim())
+
+        Assert.assertEquals("bar", actualOut.trim())
+        Assert.assertTrue(actualErr.isBlank())
+    }
+
+    @Test
     fun testEvalWithContextNamesWithSymbols() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
 
@@ -266,4 +296,22 @@ fun assertThrows(exceptionClass: Class<*>, body: () -> Unit) {
             Assert.fail("Expecting an exception of type ${exceptionClass.name} but got ${e.javaClass.name}")
         }
     }
+}
+
+internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
+    val outStream = ByteArrayOutputStream()
+    val errStream = ByteArrayOutputStream()
+    val prevOut = System.out
+    val prevErr = System.err
+    System.setOut(PrintStream(outStream))
+    System.setErr(PrintStream(errStream))
+    val ret = try {
+        body()
+    } finally {
+        System.out.flush()
+        System.err.flush()
+        System.setOut(prevOut)
+        System.setErr(prevErr)
+    }
+    return Triple(outStream.toString().trim(), errStream.toString().trim(), ret)
 }

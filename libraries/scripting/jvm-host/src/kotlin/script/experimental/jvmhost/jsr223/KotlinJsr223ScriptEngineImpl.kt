@@ -32,6 +32,8 @@ class KotlinJsr223ScriptEngineImpl(
     @Volatile
     private var lastScriptContext: ScriptContext? = null
 
+    override fun getInvokeWrapper(context: ScriptContext): InvokeWrapper? = makeBestIoTrappingInvoker(context)
+
     val jsr223HostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
         jsr223 {
             getScriptContext { lastScriptContext ?: getContext() }
@@ -68,7 +70,7 @@ class KotlinJsr223ScriptEngineImpl(
         ScriptArgsWithTypes(arrayOf(context.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()), arrayOf(Bindings::class))
 
     override val invokeWrapper: InvokeWrapper?
-        get() = null
+        get() = getInvokeWrapper(context)
 
     override val backwardInstancesHistory: Sequence<Any>
         get() = getCurrentState(getContext()).asState(JvmReplEvaluatorState::class.java).history.asReversed().asSequence().map { it.item }

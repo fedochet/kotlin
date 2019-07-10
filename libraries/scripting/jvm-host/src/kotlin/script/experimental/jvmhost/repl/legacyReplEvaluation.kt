@@ -53,7 +53,14 @@ class JvmReplEvaluator(
             }
         }
 
-        val res = runBlocking { scriptEvaluator(compiledScript, currentConfiguration) }
+        val res =
+            if (invokeWrapper != null) invokeWrapper.invoke {
+                runBlocking {
+                    scriptEvaluator(compiledScript, currentConfiguration)
+                }
+            } else runBlocking {
+                scriptEvaluator(compiledScript, currentConfiguration)
+            }
 
         when (res) {
             is ResultWithDiagnostics.Success -> {

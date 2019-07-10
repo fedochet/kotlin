@@ -53,12 +53,14 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
                         createState()
                     }) as IReplStageState<*>
 
+    open fun getInvokeWrapper(context: ScriptContext): InvokeWrapper? = null
+
     open fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = null
 
     open fun compileAndEval(script: String, context: ScriptContext): Any? {
         val codeLine = nextCodeLine(context, script)
         val state = getCurrentState(context)
-        val result = replEvaluator.compileAndEval(state, codeLine, scriptArgs = overrideScriptArgs(context))
+        val result = replEvaluator.compileAndEval(state, codeLine, overrideScriptArgs(context), getInvokeWrapper(context))
         return when (result) {
             is ReplEvalResult.ValueResult -> result.value
             is ReplEvalResult.UnitResult -> null
@@ -84,7 +86,7 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
     open fun eval(compiledScript: CompiledKotlinScript, context: ScriptContext): Any? {
         val state = getCurrentState(context)
         val result = try {
-            replEvaluator.eval(state, compiledScript.compiledData, scriptArgs = overrideScriptArgs(context))
+            replEvaluator.eval(state, compiledScript.compiledData, overrideScriptArgs(context), getInvokeWrapper(context))
         }
         catch (e: Exception) {
             throw ScriptException(e)
