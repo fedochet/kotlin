@@ -88,6 +88,11 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: plugins/lint/lint-idea
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
+      
+ - Path: libraries/scripting/jvm-host/src/kotlin/script/experimental/jvmhost/jsr223/fromCommonsIo
+      - License: Apache 2 ([license/third_party/commons-io_LICENSE.txt][commons-io])
+      - Copyright 2002-2016 The Apache Software Foundation
+     
 
 ## Kotlin Test Data
 
