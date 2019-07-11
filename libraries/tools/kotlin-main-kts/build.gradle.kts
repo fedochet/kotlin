@@ -26,8 +26,11 @@ dependencies {
         testCompile(project(it))
     }
     compileOnly("org.apache.ivy:ivy:2.4.0")
+    compileOnly(project(":kotlin-scripting-jvm-host"))
+    compileOnly(project(":compiler:cli-common"))
     runtime(project(":kotlin-compiler-embeddable"))
     runtime(project(":kotlin-scripting-compiler-embeddable"))
+    runtime(project(":kotlin-scripting-jvm-host-embeddable"))
     runtime(project(":kotlin-reflect"))
     embedded("org.apache.ivy:ivy:2.4.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
