@@ -55,7 +55,9 @@ class ScriptExternalHighlightingPass(
         val reports = IdeScriptReportSink.getReports(file.virtualFile)
 
         val annotations = reports.mapNotNull { (message, severity, _ , location) ->
-            val (startOffset, endOffset) = location?.let { computeOffsets(document, it) } ?: 0 to 0
+            if (location == null) return@mapNotNull null
+
+            val (startOffset, endOffset) = computeOffsets(document, location)
             val annotation = Annotation(
                 startOffset,
                 endOffset,
