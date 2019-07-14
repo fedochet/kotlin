@@ -12,9 +12,12 @@ import java.io.File
 
 private const val PROJECT_DIR_PLACEHOLDER = "${'$'}PROJECT_DIR$"
 
-internal class JpsFileToPathConverter(jpsProject: JpsProject) : FileToPathConverter {
-    private val baseDirPath = JpsModelSerializationDataService
-        .getBaseDirectory(jpsProject)?.canonicalFile?.invariantSeparatorsPath
+internal class JpsFileToPathConverter(
+    jpsProject: JpsProject
+) : RelativeFileToPathConverter(JpsModelSerializationDataService.getBaseDirectory(jpsProject))
+
+internal open class RelativeFileToPathConverter(baseDirFile: File?) : FileToPathConverter {
+    private val baseDirPath = baseDirFile?.canonicalFile?.invariantSeparatorsPath
 
     override fun toPath(file: File): String {
         val path = file.canonicalFile.invariantSeparatorsPath
