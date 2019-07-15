@@ -41,3 +41,4 @@ abstract class IrNoArgumentsCallableReferenceBase(
 
     override fun removeValueArgument(index: Int) = throwNoValueArguments()
 }
+

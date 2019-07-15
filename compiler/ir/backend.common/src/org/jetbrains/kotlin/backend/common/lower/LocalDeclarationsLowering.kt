@@ -329,7 +329,7 @@ class LocalDeclarationsLowering(
                 ).also {
                     it.fillArguments2(expression, newCallee)
                     it.copyTypeArgumentsFrom(expression)
-                    it.attributeOwnerId = expression.attributeOwnerId
+                    it.copyAttributes(expression)
                 }
             }
 

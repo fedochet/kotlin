@@ -83,7 +83,7 @@ class IrClassImpl(
 
     override var metadata: MetadataSource? = null
 
-    override var attributeOwnerId: Any? = Any()
+    override var attributeOwnerId: IrAttributeContainer = this
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
