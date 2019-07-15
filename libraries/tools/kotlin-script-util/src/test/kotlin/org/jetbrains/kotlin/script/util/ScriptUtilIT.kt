@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigura
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
@@ -139,8 +141,8 @@ done
         suppressOutput: Boolean
     ): Class<*>? {
         val messageCollector =
-                if (suppressOutput) MessageCollector.NONE
-                else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+            if (suppressOutput) MessageCollector.NONE
+            else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, true)
 
         val rootDisposable = Disposer.newDisposable()
         try {
@@ -169,6 +171,11 @@ done
             }
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
+            environment.getSourceFiles().forEach {
+                messageCollector.report(CompilerMessageSeverity.LOGGING, "file: $it -> script def: ${it.findScriptDefinition()?.name}")
+            }
+            messageCollector.report(CompilerMessageSeverity.LOGGING, "compilation classpath:\n  ${environment.configuration.jvmClasspathRoots.joinToString("\n  ")}")
 
             return try {
                 KotlinToJVMBytecodeCompiler.compileScript(environment)
