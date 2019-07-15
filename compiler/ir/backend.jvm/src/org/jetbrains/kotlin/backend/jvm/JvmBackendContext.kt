@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
@@ -49,17 +48,14 @@ class JvmBackendContext(
     // TODO: also store info for EnclosingMethod
     internal class LocalClassInfo(val internalName: String)
 
-    private val localClassInfo = mutableMapOf<Any, LocalClassInfo>()
+    private val localClassInfo = mutableMapOf<IrAttributeContainer, LocalClassInfo>()
 
-    internal fun getLocalClassInfo(container: IrAttributeContainer): LocalClassInfo? {
-        val key = container.attributeOwnerId ?: error("No attributeOwnerId for: ${(container as IrElement).dump()}")
-        return localClassInfo[key]
-    }
+    internal fun getLocalClassInfo(container: IrAttributeContainer): LocalClassInfo? =
+        localClassInfo[container.attributeOwnerId]
 
     internal fun putLocalClassInfo(container: IrAttributeContainer, value: LocalClassInfo) {
-        val key = container.attributeOwnerId ?: error("No attributeOwnerId for: ${(container as IrElement).dump()}")
-        localClassInfo[key] = value
-    };
+        localClassInfo[container.attributeOwnerId] = value
+    }
 
     override var inVerbosePhase: Boolean = false
 

@@ -136,7 +136,6 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
 
                 val currentDeclarationParent = allScopes.map { it.irElement }.last { it is IrDeclarationParent } as IrDeclarationParent
                 val loweredFunctionReference = FunctionReferenceBuilder(currentDeclarationParent, expression).build()
-                loweredFunctionReference.functionReferenceClass.attributeOwnerId = expression.attributeOwnerId
                 return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).irBlock(expression) {
                     +loweredFunctionReference.functionReferenceClass
                     +irCall(loweredFunctionReference.functionReferenceConstructor.symbol).apply {
@@ -196,6 +195,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             parent = referenceParent
             superTypes += functionReferenceOrLambda.owner.defaultType
             createImplicitParameterDeclarationWithWrappedDescriptor()
+            copyAttributes(irFunctionReference)
         }
 
         private val argumentToFieldMap = boundCalleeParameters.associateWith { parameter ->
