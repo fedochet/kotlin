@@ -23,7 +23,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
      *
      * TODO: provide a more granular & elaborate API here to reduce confusion
      */
-    fun KotlinTypeMarker.getAnnotationSingleArgumentValue(fqName: FqName): Any?
+    fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any?
 
     fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker?
     fun TypeConstructorMarker.isInlineClass(): Boolean

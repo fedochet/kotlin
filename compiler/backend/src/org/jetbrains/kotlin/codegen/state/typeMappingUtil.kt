@@ -131,7 +131,7 @@ private fun DeclarationDescriptor.suppressWildcardsMode(): Boolean? =
 private fun KotlinTypeMarker.suppressWildcardsMode(typeSystem: TypeSystemCommonBackendContext): Boolean? =
     with(typeSystem) {
         if (hasAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME))
-            getAnnotationSingleArgumentValue(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME) as? Boolean ?: true
+            getAnnotationFirstArgumentValue(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME) as? Boolean ?: true
         else null
     }
 
