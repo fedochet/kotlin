@@ -74,15 +74,15 @@ fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
             }
             putValue("Main-Class", scriptClassFQName)
         }
-        // TODO: fat jar/dependencies
-        val jarStream = JarOutputStream(fileStream, manifest)
-        jarStream.putNextEntry(JarEntry(scriptMetadataPath(scriptClassFQName)))
-        jarStream.write(copyWithoutModule().toBytes())
-        for ((path, bytes) in module.compilerOutputFiles) {
-            jarStream.putNextEntry(JarEntry(path))
-            jarStream.write(bytes)
+        JarOutputStream(fileStream, manifest).use { jarStream ->
+            jarStream.putNextEntry(JarEntry(scriptMetadataPath(scriptClassFQName)))
+            jarStream.write(copyWithoutModule().toBytes())
+            for ((path, bytes) in module.compilerOutputFiles) {
+                jarStream.putNextEntry(JarEntry(path))
+                jarStream.write(bytes)
+            }
+            jarStream.finish()
         }
-        jarStream.finish()
     }
 }
 
