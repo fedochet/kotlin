@@ -127,7 +127,8 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override fun isScript(file: File): Boolean =
             file.name.endsWith(".$fileExtension") &&
                     (filePathPattern?.let {
-                        Regex(it).matches(file.path)
+                        val path = if (File.separatorChar != '/') file.path.replace(File.separatorChar, '/') else file.path
+                        Regex(it).matches(path)
                     } ?: true)
 
         override val fileExtension: String get() = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!
