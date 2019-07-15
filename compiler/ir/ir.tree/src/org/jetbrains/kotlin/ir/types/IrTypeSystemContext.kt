@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -269,7 +268,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         (this as IrAnnotationContainer).hasAnnotation(fqName) ||
                 (this as IrType).toKotlinType().annotations.hasAnnotation(fqName)
 
-    override fun KotlinTypeMarker.getAnnotationSingleArgumentValue(fqName: FqName): Any? =
+    override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? IrType)?.annotations?.firstOrNull { annotation ->
             annotation.symbol.owner.parentAsClass.descriptor.fqNameSafe == fqName
         }?.run {
