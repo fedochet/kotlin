@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigura
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
@@ -139,8 +140,8 @@ done
         suppressOutput: Boolean
     ): Class<*>? {
         val messageCollector =
-                if (suppressOutput) MessageCollector.NONE
-                else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+            if (suppressOutput) MessageCollector.NONE
+            else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, true)
 
         val rootDisposable = Disposer.newDisposable()
         try {
@@ -169,6 +170,10 @@ done
             }
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
+            environment.getSourceFiles().forEach {
+                messageCollector.report(CompilerMessageSeverity.LOGGING, "file: $it -> script def: ${it.findScriptDefinition()?.name}")
+            }
 
             return try {
                 KotlinToJVMBytecodeCompiler.compileScript(environment)
