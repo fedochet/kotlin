@@ -112,10 +112,10 @@ done
 
     @Test
     fun testResolveStdJUnitDynVer() {
-        val (_, err) = captureOutAndErr {
+        val (out, err) = captureOutAndErr {
             Assert.assertNull(compileScript("args-junit-dynver-error.kts", StandardArgsScriptTemplateWithMavenResolving::class))
         }
-        Assert.assertTrue("Expecting error: unresolved reference: assertThrows", err.contains("error: unresolved reference: assertThrows"))
+        Assert.assertTrue("Expecting error: unresolved reference: assertThrows, got:\nOUT:\n$out\nERR:\n$err", err.contains("error: unresolved reference: assertThrows"))
 
         val scriptClass = compileScript("args-junit-dynver.kts", StandardArgsScriptTemplateWithMavenResolving::class)
         Assert.assertNotNull(scriptClass)
