@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirVariable<F : FirVariable<F>> :
@@ -23,10 +22,6 @@ interface FirVariable<F : FirVariable<F>> :
     val delegate: FirExpression?
 
     override val symbol: FirVariableSymbol<F>
-
-    fun replaceDelegate(newDelegate: FirExpression?) {}
-
-    fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D)
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)

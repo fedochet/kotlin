@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -35,21 +34,12 @@ class FirVariableImpl(
     override val receiverTypeRef: FirTypeRef?
         get() = null
 
-    override fun replaceDelegate(newDelegate: FirExpression?) {
-        delegate = newDelegate
-    }
-
-    override fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         initializer = initializer?.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         delegate = delegate?.transformSingle(transformer, data)
-        transformChildrenWithoutAccessors(transformer, data)
 
-        return this
+        return super<FirAbstractNamedAnnotatedDeclaration>.transformChildren(transformer, data)
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
