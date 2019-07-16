@@ -21,7 +21,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler"))
 
     Platform[192].orHigher {
-        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
+        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer") }
     }
     
     testCompile(project(":compiler:backend"))
