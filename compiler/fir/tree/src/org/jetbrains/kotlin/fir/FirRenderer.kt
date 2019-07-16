@@ -346,8 +346,8 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitVariable(property)
         println()
         pushIndent()
-        property.getter.accept(this)
-        if (property.getter.body == null) {
+        property.getter?.accept(this)
+        if (property.getter?.body == null) {
             println()
         }
         if (property.isVar) {

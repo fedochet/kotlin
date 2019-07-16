@@ -1034,7 +1034,7 @@ open class FirBodyResolveTransformer(
                 variable is FirProperty && variable.getter !is FirDefaultPropertyAccessor -> {
                     variable.transformReturnTypeRef(
                         this,
-                        when (val resultType = variable.getter.returnTypeRef) {
+                        when (val resultType = variable.getter?.returnTypeRef) {
                             is FirImplicitTypeRef -> FirErrorTypeRefImpl(
                                 session,
                                 null,
@@ -1050,8 +1050,8 @@ open class FirBodyResolveTransformer(
                     )
                 }
             }
-            if (variable is FirProperty && variable.getter.returnTypeRef is FirImplicitTypeRef) {
-                variable.getter.transformReturnTypeRef(this, variable.returnTypeRef)
+            if (variable is FirProperty && variable.getter?.returnTypeRef is FirImplicitTypeRef) {
+                variable.getter?.transformReturnTypeRef(this, variable.returnTypeRef)
             }
         }
     }
@@ -1083,7 +1083,7 @@ open class FirBodyResolveTransformer(
                         storeBackingField(property)
                     })
                     var enhancedTypeRef = property.returnTypeRef
-                    property.getter.transform<FirDeclaration, Any?>(this, enhancedTypeRef)
+                    property.getter?.transform<FirDeclaration, Any?>(this, enhancedTypeRef)
                     if (property.returnTypeRef is FirImplicitTypeRef) {
                         storeVariableReturnType(property)
                         enhancedTypeRef = property.returnTypeRef

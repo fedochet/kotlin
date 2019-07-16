@@ -23,4 +23,6 @@ open class FirPropertySymbol(callableId: CallableId) : ConePropertySymbol, FirVa
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
 
+class FirDelegateFieldSymbol<D : FirVariable<D>>(callableId: CallableId) : FirVariableSymbol<D>(callableId)
+
 class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId)
