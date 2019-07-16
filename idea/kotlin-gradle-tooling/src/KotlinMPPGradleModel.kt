@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.plugins.gradle.model.ExternalDependency
 import org.jetbrains.plugins.gradle.model.ModelFactory
 import java.io.File
@@ -174,7 +173,7 @@ interface KotlinMPPGradleModel : Serializable {
 interface KonanArtifactModel : Serializable {
     val targetName: String
     val executableName: String
-    val type: CompilerOutputKind
+    val type: String // represents org.jetbrains.kotlin.konan.target.CompilerOutputKind
     val targetPlatform: String
     val file: File
     val buildTaskPath: String

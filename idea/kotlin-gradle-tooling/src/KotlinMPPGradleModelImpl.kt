@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.tasks.Exec
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
 import kotlin.collections.HashSet
 
@@ -217,7 +216,7 @@ class KotlinPlatformContainerImpl() : KotlinPlatformContainer {
 data class KonanArtifactModelImpl(
     override val targetName: String,
     override val executableName: String,
-    override val type: CompilerOutputKind,
+    override val type: String,
     override val targetPlatform: String,
     override val file: File,
     override val buildTaskPath: String,

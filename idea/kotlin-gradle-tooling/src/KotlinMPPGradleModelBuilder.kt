@@ -16,7 +16,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel.Companion.NO_KOTLIN_NATIVE_HOME
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
@@ -245,7 +244,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         return KonanArtifactModelImpl(
             compilationTargetName,
             executableName,
-            CompilerOutputKind.valueOf(outputKind),
+            outputKind,
             konanTargetName,
             outputFile,
             linkTask.path,
