@@ -303,6 +303,9 @@ fun computeInternalName(
     typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl,
     isIrBackend: Boolean
 ): String {
+
+    typeMappingConfiguration.getPredefinedInternalNameForClass(klass)?.let { return it }
+
     val container = if (isIrBackend) getContainer(klass.containingDeclaration) else klass.containingDeclaration
 
     val name = SpecialNames.safeIdentifier(klass.name).identifier
