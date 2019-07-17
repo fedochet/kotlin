@@ -19,6 +19,6 @@ dependencies {
 }
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
+        freeCompilerArgs = ["-Xinline-classes"]
     }
 }

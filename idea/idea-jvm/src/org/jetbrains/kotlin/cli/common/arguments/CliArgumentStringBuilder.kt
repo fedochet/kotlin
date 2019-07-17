@@ -8,7 +8,14 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.config.LanguageFeature
 
 object CliArgumentStringBuilder {
-    private const val languagePrefix = "-XXLanguage:"
+    private const val languageFeatureFlagPrefix = "-XXLanguage:"
+    private const val languageFeatureDedicatedFlagPrefix = "-X"
+
+    private val LanguageFeature.dedicatedFlag
+        get() = when (this) {
+            LanguageFeature.InlineClasses -> "inline-classes"
+            else -> null
+        }
 
     private val LanguageFeature.State.sign: String
         get() = when (this) {
@@ -19,7 +26,11 @@ object CliArgumentStringBuilder {
         }
 
     fun LanguageFeature.buildArgumentString(state: LanguageFeature.State): String {
-        return "$languagePrefix${state.sign}$name"
+        return if ((state == LanguageFeature.State.ENABLED || state == LanguageFeature.State.ENABLED_WITH_WARNING) && dedicatedFlag != null) {
+            languageFeatureDedicatedFlagPrefix + dedicatedFlag
+        } else {
+            "$languageFeatureFlagPrefix${state.sign}$name"
+        }
     }
 
     fun String.replaceLanguageFeature(
@@ -31,7 +42,7 @@ object CliArgumentStringBuilder {
         quoted: Boolean = true
     ): String {
         val existingFeatureIndex = indexOf(feature.name)
-        val languagePrefixIndex = lastIndexOf(languagePrefix, existingFeatureIndex)
+        val languagePrefixIndex = lastIndexOf(languageFeatureFlagPrefix, existingFeatureIndex)
         val featureArgumentString = feature.buildArgumentString(state)
         val quote = if (quoted) "\"" else ""
         return if (languagePrefixIndex != -1) {

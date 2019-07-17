@@ -5,5 +5,5 @@ plugins {
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
+    freeCompilerArgs = listOf("-Xinline-classes")
 }

@@ -129,7 +129,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var newInference: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xinline-clases",
+        value = "-Xinline-classes",
         description = "Enable experimental language feature: inline classes"
     )
     var inlineClasses: Boolean by FreezableVar(false)
