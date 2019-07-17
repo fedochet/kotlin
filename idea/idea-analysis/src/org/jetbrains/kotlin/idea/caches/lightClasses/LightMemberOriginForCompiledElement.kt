@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationContainer
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -52,14 +51,7 @@ interface LightMemberOriginForCompiledElement<T : PsiMember> : LightMemberOrigin
 
     override fun isEquivalentTo(other: PsiElement?): Boolean {
         return when (other) {
-            is KtDeclaration -> {
-                val containingFile = other.containingFile
-                if (containingFile !is KtFile || !containingFile.isCompiled) {
-                    false
-                } else {
-                    originalElement?.isEquivalentTo(other) ?: false
-                }
-            }
+            is KtDeclaration -> originalElement?.isEquivalentTo(other) ?: false
             is PsiMember -> member.isEquivalentTo(other)
             else -> false
         }
