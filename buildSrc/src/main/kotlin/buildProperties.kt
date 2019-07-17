@@ -14,6 +14,13 @@ interface PropertiesProvider {
     fun getProperty(key: String): Any?
 }
 
+fun platformVersion(version: String?): Platform? {
+    val major: Int = version?.split(".")?.getOrNull(0)?.toInt() ?: return null
+    val minor: Int = version?.split(".")?.getOrNull(1)?.toInt() ?: return null
+
+    return Platform[(major % 1000) * 10 + minor]
+}
+
 class KotlinBuildProperties(
     private val propertiesProvider: PropertiesProvider
 ) {
@@ -33,7 +40,7 @@ class KotlinBuildProperties(
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 
-    private val ideaVersion = Version(System.getProperty("idea.version"))
+    private val ideaPlatformVersion = platformVersion(System.getProperty("idea.version"))
 
     val isInIdeaSync: Boolean = run {
         // "idea.sync.active" was introduced in 2019.1
@@ -41,7 +48,7 @@ class KotlinBuildProperties(
             // before 2019.1 there is "idea.active" that was true only on sync,
             // but since 2019.1 "idea.active" present in task execution too.
             // So let's check Idea version
-            ideaVersion <= Version("2019.0") && System.getProperty("idea.active")?.toBoolean() == true
+            (ideaPlatformVersion ?: Platform.P183) < Platform.P191 && System.getProperty("idea.active")?.toBoolean() == true
         }
     }
 
@@ -71,7 +78,7 @@ class KotlinBuildProperties(
 
     val includeUltimate: Boolean = kotlinUltimateExists && (isTeamcityBuild || intellijUltimateEnabled)
 
-    val supportsNativeDebug: Boolean = includeCidrPlugins || (includeUltimate && Version("2019.2") <= ideaVersion)
+    val supportsNativeDebug: Boolean = includeCidrPlugins || (includeUltimate && Platform.P191 < (ideaPlatformVersion ?: Platform.P191))
 
     val postProcessing: Boolean get() = isTeamcityBuild || getBoolean("kotlin.build.postprocessing", true)
 
@@ -114,14 +121,3 @@ val Settings.kotlinBuildProperties: KotlinBuildProperties
         ?: KotlinBuildProperties(SettingsProperties(this)).also {
             extensions.add(extensionName, it)
         }
-
-private class Version(version: String?) : Comparable<Version> {
-    private val major: Int? = version?.split(".")?.getOrNull(0)?.toInt()
-    private val minor: Int? = version?.split(".")?.getOrNull(1)?.toInt()
-    override fun compareTo(other: Version) = when {
-        listOf(major, minor, other.major, other.minor).contains(null) -> 0
-        this.major != other.major -> this.major!! - other.major!!
-        this.minor != other.minor -> this.minor!! - other.minor!!
-        else -> 0
-    }
-}
